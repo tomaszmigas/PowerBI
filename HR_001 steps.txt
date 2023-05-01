@@ -1,0 +1,85 @@
+1. Connecting and Shaping Data
+	- Connecting to Oracle Database (HR Schema) and import tables using SQL queries
+
+	- Creating Calendar Table (DAX)
+	
+
+	- Employees:
+		- Self Join to Create Manager First Name and Last Name Column (Query Transformer -> Merge)
+		- Employee_Id: Whole Number
+		- Manager_Id: Whole Number
+		- Department_Id: Whole Number
+		- Salary: Currency ($)
+		- Commission_PCT: Fixed_Decimal, Replace Null to 0, Rounding (2)
+		
+	- Departmens:
+		- Department_ID: Whole Number
+		- Manager_ID: Whole Number
+		- Location_ID: Whole Number
+	- Countries:
+		- Region_ID: Whole Number
+	- Locations:
+		- Location_ID: Whole Number
+	- Regions:
+		- Region_ID: Whole Number
+	- Job_History:
+		- Employee_ID: Whole Number
+		- Department_ID: Whole Number
+		- Start Date, End Date: Date
+		
+--------------------------------------------------------------------------------------------------------------------------
+2. Creating Data Model
+	- creating relations with One-Way Filters between tables
+	- Two-Way Filter: Employees-Jobs to see Max Salary and Min Salary by Department Name (Drill-Through)
+--------------------------------------------------------------------------------------------------------------------------
+3. Creating Measures and CC
+	- Employees Table:
+		Calculated Columns
+			- Full Name First Name + Last Name
+			- Years of Work --> today - hire date
+			- Has_Commission --> IF (commission)
+
+		Measures
+			- AVG Salary:		average (salary)
+			- Total AVG Salary:	calculate(average('Employees'[salary]),ALL())
+ 			- AVG Rate:		[AVG Salary] / [Total AVG Salary]
+
+--------------------------------------------------------------------------------------------------------------------------
+5. Creating Raport
+	Pages: Summary, Department Details, Job Details
+------------------------------------------------
+	Summary Page
+		- Matrix AVG Salary, Total AVG Salary, AVG Salary Rate By Department_Name, Cell Background Color
+		- Matrix No of Employees, AVG Salary By Job Title, Cell Data Bars
+		- Line And Clustered Column Chart:
+			- columns as average salaries by department
+			- line as Total AVG Salary for All Departments
+		- Donut Chart:	number of employees by department as percent value
+		- Slider:	Years of Work (between)
+		- Slider:	Regions, Countries, Cities (Hierarchy) + Visual Filtering 
+					- only these fields, where Sum of Employees >=1
+		- Map:		location - City, Bubble Size - sum of employees
+
+ 		- Button:	Clear All Filters - Bookmark (no filters)
+
+		Filters
+			- Drill-Through				- Department Name Detail Info
+			- Drill-Through				- Job Title Detail Info
+
+	
+		Visuals Interactions:
+			- partly highlighted
+			- partly filtered
+------------------------------------------------
+	Department Details Page
+		- Card with Department Name (First Department Name + Drill-Through Filter)
+		- Matrix: Max Salary, Min Salary, Sum of Employees By Job Title
+		- Matrix: Top 5 Salaries by Department (Visual Filter TopN)
+		- Line Chart: Amount of hired employees be Start of Month 
+------------------------------------------------
+	Job Details Page
+		- Card with Job Title (First Job Title + Drill-Through Filter)
+		- Line and Column Chart
+			- Column: Amount of hired employees by Start of Month
+			- Line:	Average Salary of hired employees by Start of Month
+		- Button: Page Navigator
